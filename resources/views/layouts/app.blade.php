@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <div class="container max-w-4xl mx-auto p-6">
+    <div class="container max-w-4xl mx-auto p-6 mb-4">
         <ul>
             <li><a href="{{ route('tasks.index') }}">All Tasks</a></li>
             <li><a href="{{ route('tasks.create') }}">Add New Task</a></li>
