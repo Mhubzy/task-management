@@ -14,7 +14,7 @@
         @enderror
 
         <label for="description" class="block font-medium mb-1">Description: </label>
-        <textarea name="description" id="description" value="{{   old('description')  }}" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+        <textarea name="description" id="description" class="w-full border border-gray-300 rounded px-3 py-2">{{   old('description')  }}</textarea>
         @error('description')
             <div class="text-red-600 text-sm mt-1">{{ $message  }}</div>
         @enderror
