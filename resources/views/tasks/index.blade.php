@@ -4,7 +4,7 @@
 
 @section('content')
     <h1>All Tasks</h1>
-     <ul>
+    <ul>
         @forelse ($tasks as $task)
             <li>
                 {{  $task->title }} -
@@ -29,7 +29,5 @@
             @empty
             <li>No tasks yet.</li>
         @endforelse
-        {{-- {{ $tasks->links() }} --}}
-        {{-- <p>Showing {{ $tasks->firstItem() }} to {{ $tasks->lastItem() }} of {{ $tasks->total() }} tasks</p> --}}
     </ul>
 @endsection

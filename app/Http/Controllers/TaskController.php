@@ -63,7 +63,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
         ]));
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
+        return redirect()->route('tasks.show', $task)->with('success', 'Task updated successfully.');
     }
 
     /**
