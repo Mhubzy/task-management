@@ -31,7 +31,7 @@
             @enderror
         </div>
 
-        <button class="bg-blue-600 text-white px-4 py-2 rounded type="submit">Update Task</button>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update Task</button>
     </form>
 
 @endsection

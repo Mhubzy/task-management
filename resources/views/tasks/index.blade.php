@@ -25,7 +25,7 @@
                     <form method="post" action="{{ route('tasks.updateStatus', $task) }}">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="bg-blue-600 text-black px-3 py-1 rounded text-sm">
+                        <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">
                             {{ $task->status === 'pending' ? 'Mark as Completed' : 'Mark as Pending' }}
                         </button>
                     </form>

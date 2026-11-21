@@ -10,9 +10,9 @@
 <body>
 
     <div class="container max-w-4xl mx-auto p-6 mb-4">
-        <ul>
-            <li><a href="{{ route('tasks.index') }}">All Tasks</a></li>
-            <li><a href="{{ route('tasks.create') }}">Add New Task</a></li>
+        <ul class="flex gap-4 mb-6">
+            <li><a href="{{ route('tasks.index') }}"  class="text-blue-600 hover:underline">All Tasks</a></li>
+            <li><a href="{{ route('tasks.create') }}" class="text-blue-600 hover:underline">Add New Task</a></li>
         </ul>
 
         @if (session('success'))
