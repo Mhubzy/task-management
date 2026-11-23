@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.tasks')
 
 @section('title', 'Add New Task')
 
