@@ -19,7 +19,7 @@
 
     <div class="flex items-center gap-4 mt-4">
         <a href="{{ route('tasks.edit', $task) }}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Edit Task</a>
-        <a href="{{ route('tasks.index') }}" class="text-blue-600 hover:underline text-sm">Back to all tasks</a>
+        <a href="{{ route('tasks.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm"">Back to all tasks</a>
     </div>
 
 @endsection

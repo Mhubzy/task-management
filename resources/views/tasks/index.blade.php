@@ -30,8 +30,8 @@
                         </button>
                     </form>
 
-                    <a href="{{ route('tasks.show', $task) }}" class="text-blue-600 hover:underline text-sm">View Task</a>
-                    <a href="{{ route('tasks.edit', $task) }}" class="text-blue-600 hover:underline text-sm">Edit Task</a>
+                    <a href="{{ route('tasks.show', $task) }}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">View Task</a>
+                    <a href="{{ route('tasks.edit', $task) }}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Edit Task</a>
 
                      <form method="post" action="{{ route('tasks.destroy', $task) }}" onsubmit="return confirm('Are you sure you want to delete this task?');">
                         @csrf
