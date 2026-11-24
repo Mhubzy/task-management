@@ -10,9 +10,9 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::orderBy('due_date')->get();
+        $tasks = $request->user()->tasks()->orderBy('due_date')->get();
         return view('tasks.index', ['tasks' => $tasks]);
     }
 
@@ -35,13 +35,14 @@ class TaskController extends Controller
             'due_date' => 'nullable|date',
         ]);
 
-        Task::create($validated);
+        $request->user()->tasks()->create($validated);
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }
 
     public function show(Task $task)
     {
+        abort_if($task->user_id !== auth()->id(), 403);
         return view('tasks.show', ['task' => $task]);
     }
 
@@ -50,6 +51,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
+        abort_if($task->user_id !== auth()->id(), 403);
         return view('tasks.edit', ['task' => $task]);
     }
 
@@ -58,6 +60,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
+        abort_if($task->user_id !== auth()->id(), 403);
         $task->update($request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -71,12 +74,14 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        abort_if($task->user_id !== auth()->id(), 403);
         $task->delete();
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
     }
 
     public function toggleStatus(Task $task)
     {
+        abort_if($task->user_id !== auth()->id(), 403);
         $task->status = $task->status === 'pending' ? 'completed' : 'pending';
         $task->save();
         return redirect()->route('tasks.index')->with('success', 'Task status updated successfully.');
