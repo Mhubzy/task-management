@@ -3,7 +3,7 @@
 @section('title', 'Add New Task')
 
 @section('content')
-    <h1 class="text-2xl font-bold mb-4">Add Tasks</h1>
+    <h1 class="text-2xl font-bold mb-4">Add Task</h1>
 
     <form method="POST" action="{{ route('tasks.store') }}">
         @csrf
@@ -31,7 +31,10 @@
             @enderror
         </div>
 
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add Task</button>
+        <div class="flex justify-between items-center mb-4">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add Task</button>
+            <a href="{{ route('tasks.index') }}" class="border border-gray-300 text-gray-700 px-4 py-2 rounded text-sm">Back To Task</a>
+        </div>
     </form>
 
 @endsection

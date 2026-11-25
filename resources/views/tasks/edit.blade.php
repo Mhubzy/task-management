@@ -31,7 +31,10 @@
             @enderror
         </div>
 
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update Task</button>
+        <div class="flex justify-between items-center mb-4">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update Task</button>
+            <a href="{{ route('tasks.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Back To Task</a>
+        </div>
     </form>
 
 @endsection
