@@ -1,6 +1,6 @@
 @extends('layouts.tasks')
 
-@section('title', 'All Tasks')
+@section('title', 'My Tasks')
 
 @section('content')
     <div class="flex justify-between items-center mb-4">
