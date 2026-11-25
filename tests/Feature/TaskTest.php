@@ -59,3 +59,22 @@ test('a user sees only their own tasks', function () {
     // 3. the other user's task does NOT appear
     $response->assertDontSee('Someone elses task');
 });
+
+test('a user cannot access another user\'s task', function () {
+    // Arrange: a task owned by someone else
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $task = $owner->tasks()->create(['title' => 'Private task']);
+
+    // Act + Assert: the intruder is blocked on every route
+    $this->actingAs($intruder)->get(route('tasks.show', $task))->assertForbidden();
+        // add the other four here
+    $this->actingAs($intruder)->get(route('tasks.edit', $task))->assertForbidden();
+    $this->actingAs($intruder)->put(route('tasks.update', $task), [
+        'title' => 'Hacked title',
+    ])->assertForbidden();
+    $this->actingAs($intruder)->delete(route('tasks.destroy', $task))->assertForbidden();
+    $this->actingAs($intruder)->patch(route('tasks.updateStatus', $task))->assertForbidden();
+        // The task is untouched
+    $this->assertDatabaseHas('tasks', ['id' => $task->id, 'title' => 'Private task']);
+});
