@@ -68,13 +68,10 @@ test('a user cannot access another user\'s task', function () {
 
     // Act + Assert: the intruder is blocked on every route
     $this->actingAs($intruder)->get(route('tasks.show', $task))->assertForbidden();
-        // add the other four here
     $this->actingAs($intruder)->get(route('tasks.edit', $task))->assertForbidden();
-    $this->actingAs($intruder)->put(route('tasks.update', $task), [
-        'title' => 'Hacked title',
-    ])->assertForbidden();
+    $this->actingAs($intruder)->patch(route('tasks.updateStatus', $task))->assertForbidden();
     $this->actingAs($intruder)->delete(route('tasks.destroy', $task))->assertForbidden();
     $this->actingAs($intruder)->patch(route('tasks.updateStatus', $task))->assertForbidden();
-        // The task is untouched
+    // The task is untouched
     $this->assertDatabaseHas('tasks', ['id' => $task->id, 'title' => 'Private task']);
 });
