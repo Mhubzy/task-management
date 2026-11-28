@@ -1,7 +1,7 @@
 <?php
 
-test('the application returns a successful response', function () {
+it('redirects the home page to the task list', function () {
     $response = $this->get('/');
 
-    $response->assertStatus(200);
+    $response->assertRedirect(route('tasks.index'));
 });

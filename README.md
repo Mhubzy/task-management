@@ -1,58 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Task Manager
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A task management web app built with Laravel. Users register an account, log in, and manage their own to-do list: create tasks with a due date, edit them, mark them completed or pending, and delete them. Every user can only see and change their own tasks.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Register, log in and log out (Laravel Breeze)
+- Create, view, edit and delete tasks
+- Each task has a title, description, due date and status (pending or completed)
+- Mark a task as completed or pending with one click
+- Form validation with clear error messages
+- Each user sees only their own tasks
+- Opening, editing or deleting another user's task is blocked (403 Forbidden)
+- Automated feature tests (Pest)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Built With
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Laravel 13 (MVC, Eloquent ORM, migrations)
+- Blade templates
+- Tailwind CSS (via Vite)
+- SQLite
+- Laravel Breeze (authentication)
+- Pest (testing)
 
-## Learning Laravel
+## Requirements
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP (the version required by Laravel 13) and Composer
+- Node.js and npm
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Setup
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/Mhubzy/task-management.git
+cd task-management
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+npm run build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Running the App
 
-## Contributing
+Start the Laravel server:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan serve
+```
 
-## Code of Conduct
+Then open http://localhost:8000 in your browser. Register an account to start adding tasks.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+While developing, run `npm run dev` in a second terminal so Tailwind styles update as you edit. If you use Laravel Herd, the app is served automatically at `task-management.test`.
 
-## Security Vulnerabilities
+## Running the Tests
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan test
+```
 
-## License
+The tests use an in-memory database, so they never touch your real data. They cover creating a task, validation, per-user task lists, access control (403), updating, toggling status, deleting, and redirecting guests to the login page.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Project Structure
+
+| Part | File |
+|---|---|
+| Model | `app/Models/Task.php` |
+| Controller | `app/Http/Controllers/TaskController.php` |
+| Routes | `routes/web.php` |
+| Task views | `resources/views/tasks/` |
+| Layout | `resources/views/layouts/tasks.blade.php` |
+| Tests | `tests/Feature/TaskTest.php` |
+
+## How Task Privacy Works
+
+Each task stores the id of the user who owns it in a `user_id` column, which links to the `users` table. The task list only loads tasks that belong to the logged-in user, using `$request->user()->tasks()`. If a user opens the URL of someone else's task, the controller stops the request with a 403 Forbidden error, using `abort_if($task->user_id !== auth()->id(), 403)`.
+
+## Author
+
+Adeshina Mubarak (Mhubzy)

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.tasks')
 
 @section('title', "Show Task Details")
 
@@ -14,12 +14,12 @@
         </div>
 
         <p class="text-gray-600 mb-4">{{$task->description ?? 'No description' }}</p>
-        <p class="text-sm text-gray-500">Due: {{$task->due_date?->format('d-m-Y') ?? 'No due date'}}</p>
+        <p class="text-sm text-gray-500">Due: {{$task->due_date?->format('d M Y') ?? 'No due date'}}</p>
     </div>
 
-    <div class="flex items-center gap-4 mt-4">
+    <div class="flex justify-between items-center mb-4 mt-4">
         <a href="{{ route('tasks.edit', $task) }}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Edit Task</a>
-        <a href="{{ route('tasks.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm"">Back to all tasks</a>
+        <a href="{{ route('tasks.index') }}" class="border border-gray-300 text-gray-700 px-4 py-2 rounded text-sm">Back to all tasks</a>
     </div>
 
 @endsection

@@ -1,7 +1,126 @@
 <?php
 
-test('example', function () {
-    $response = $this->get('/');
+use App\Models\User;
 
+test('a user can create a task', function () {
+    // Arrange
+    $user = User::factory()->create();
+
+    // Act
+    $response = $this->actingAs($user)->post(route('tasks.store'), [
+        'title' => 'Write tests',
+        'description' => 'Learn feature testing',
+        'due_date' => '2026-12-01',
+    ]);
+
+    // 1. the app redirected to the task list
+    $response->assertRedirect(route('tasks.index'));
+
+    // 2. the task exists in the database, owned by this user
+    $this->assertDatabaseHas('tasks', [
+        'title' => 'Write tests',
+        'user_id' => $user->id,
+    ]);
+});
+
+test('a task cannot be created without a title', function () {
+    // Arrange
+    $user = User::factory()->create();
+
+    // Act: send the form with an empty title
+    $response = $this->actingAs($user)->post(route('tasks.store'), [
+        'title' => '',
+        'description' => 'No title here',
+    ]);
+
+    // 1. validation failed for the title field
+    $response->assertSessionHasErrors('title');
+
+    // 2. no task was saved
+    $this->assertDatabaseCount('tasks', 0);
+});
+
+test('a user sees only their own tasks', function () {
+    // Arrange: two users, one task each
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+
+    $user->tasks()->create(['title' => 'My own task']);
+    $otherUser->tasks()->create(['title' => 'Someone elses task']);
+
+    // Act: the first user opens the task list
+    $response = $this->actingAs($user)->get(route('tasks.index'));
+
+    // Assert
+    // 1. the page loads successfully
     $response->assertStatus(200);
+    // 2. the user's own task appears on the page
+    $response->assertSee('My own task');
+    // 3. the other user's task does NOT appear
+    $response->assertDontSee('Someone elses task');
+});
+
+test('a user cannot access another user\'s task', function () {
+    // Arrange: a task owned by someone else
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $task = $owner->tasks()->create(['title' => 'Private task']);
+
+    // Act + Assert: the intruder is blocked on every route
+    $this->actingAs($intruder)->get(route('tasks.show', $task))->assertForbidden();
+    $this->actingAs($intruder)->get(route('tasks.edit', $task))->assertForbidden();
+    $this->actingAs($intruder)->put(route('tasks.update', $task), ['title' => 'Hacked title'])->assertForbidden();
+    $this->actingAs($intruder)->delete(route('tasks.destroy', $task))->assertForbidden();
+    $this->actingAs($intruder)->patch(route('tasks.updateStatus', $task))->assertForbidden();
+    // The task is untouched
+    $this->assertDatabaseHas('tasks', ['id' => $task->id, 'title' => 'Private task']);
+});
+
+test('a user can update their own task', function () {
+    // Arrange
+    $user = User::factory()->create();
+    $task = $user->tasks()->create(['title' => 'Old title']);
+
+    // Act
+    $response = $this->actingAs($user)->put(route('tasks.update', $task), [
+        'title' => 'New title',
+    ]);
+
+    // Assert
+    $response->assertRedirect(route('tasks.show', $task));
+    $this->assertDatabaseHas('tasks', ['id' => $task->id, 'title' => 'New title']);
+});
+
+test('a user can toggle the status of their own task', function () {
+    // Arrange
+    $user = User::factory()->create();
+    $task = $user->tasks()->create(['title' => 'Toggle me']);
+
+    // Act
+    $response = $this->actingAs($user)->patch(route('tasks.updateStatus', $task));
+
+    // Assert
+    $response->assertRedirect(route('tasks.index'));
+    $this->assertDatabaseHas('tasks', ['id' => $task->id, 'status' => 'completed']);
+});
+
+test('a user can delete their own task', function () {
+    // Arrange
+    $user = User::factory()->create();
+    $task = $user->tasks()->create(['title' => 'Delete me']);
+
+    // Act
+    $response = $this->actingAs($user)->delete(route('tasks.destroy', $task));
+
+    // Assert
+    $response->assertRedirect(route('tasks.index'));
+    $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
+});
+
+test('a guest is redirected to the login page', function () {
+    // Act: no actingAs(), so nobody is logged in
+    $response = $this->get(route('tasks.index'));
+
+    // Assert
+    $response->assertRedirect(route('login'));
 });
