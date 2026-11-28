@@ -69,9 +69,50 @@ test('a user cannot access another user\'s task', function () {
     // Act + Assert: the intruder is blocked on every route
     $this->actingAs($intruder)->get(route('tasks.show', $task))->assertForbidden();
     $this->actingAs($intruder)->get(route('tasks.edit', $task))->assertForbidden();
-    $this->actingAs($intruder)->patch(route('tasks.updateStatus', $task))->assertForbidden();
+    $this->actingAs($intruder)->put(route('tasks.update', $task), ['title' => 'Hacked title'])->assertForbidden();
     $this->actingAs($intruder)->delete(route('tasks.destroy', $task))->assertForbidden();
     $this->actingAs($intruder)->patch(route('tasks.updateStatus', $task))->assertForbidden();
     // The task is untouched
     $this->assertDatabaseHas('tasks', ['id' => $task->id, 'title' => 'Private task']);
+});
+
+test('a user can update their own task', function () {
+    // Arrange
+    $user = User::factory()->create();
+    $task = $user->tasks()->create(['title' => 'Old title']);
+
+    // Act
+    $response = $this->actingAs($user)->put(route('tasks.update', $task), [
+        'title' => 'New title',
+    ]);
+
+    // Assert
+    $response->assertRedirect(route('tasks.show', $task));
+    $this->assertDatabaseHas('tasks', ['id' => $task->id, 'title' => 'New title']);
+});
+
+test('a user can toggle the status of their own task', function () {
+    // Arrange
+    $user = User::factory()->create();
+    $task = $user->tasks()->create(['title' => 'Toggle me']);
+
+    // Act
+    $response = $this->actingAs($user)->patch(route('tasks.updateStatus', $task));
+
+    // Assert
+    $response->assertRedirect(route('tasks.index'));
+    $this->assertDatabaseHas('tasks', ['id' => $task->id, 'status' => 'completed']);
+});
+
+test('a user can delete their own task', function () {
+    // Arrange
+    $user = User::factory()->create();
+    $task = $user->tasks()->create(['title' => 'Delete me']);
+
+    // Act
+    $response = $this->actingAs($user)->delete(route('tasks.destroy', $task));
+
+    // Assert
+    $response->assertRedirect(route('tasks.index'));
+    $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
 });
