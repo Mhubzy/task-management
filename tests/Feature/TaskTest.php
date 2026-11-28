@@ -116,3 +116,11 @@ test('a user can delete their own task', function () {
     $response->assertRedirect(route('tasks.index'));
     $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
 });
+
+test('a guest is redirected to the login page', function () {
+    // Act: no actingAs(), so nobody is logged in
+    $response = $this->get(route('tasks.index'));
+
+    // Assert
+    $response->assertRedirect(route('login'));
+});
